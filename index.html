@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cajero Automático</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        button { padding: 10px; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Cajero Automático</h1>
+    <p id="saldo">Saldo: Cargando...</p>
+    
+    <button onclick="consultarSaldo()">Consultar Saldo</button>
+    <button onclick="retirarDinero()">Retirar Dinero</button>
+
+    <script>
+        function consultarSaldo() {
+            fetch("/consultar")
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("saldo").innerText = "Saldo: " + data.saldo;
+                });
+        }
+
+        function retirarDinero() {
+            let cantidad = prompt("¿Cuánto deseas retirar?");
+            if (cantidad) {
+                fetch("/retirar", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ retiro: parseFloat(cantidad) })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    document.getElementById("saldo").innerText = "Saldo: " + data.saldo;
+                });
+            }
+        }
+
+        // Cargar saldo al inicio
+        consultarSaldo();
+    </script>
+</body>
+</html>
